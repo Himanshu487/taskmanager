@@ -22,7 +22,7 @@ export const forgotPassword = async (req, res) => {
     // Generate token (valid 15 min)
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
 
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password/${token}`;
 
     await transporter.sendMail({
       from: "youremail@gmail.com",

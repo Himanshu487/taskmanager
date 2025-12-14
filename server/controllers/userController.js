@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // Signup controller
 exports.signup = async (req, res) => {
@@ -20,7 +21,15 @@ exports.signup = async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: "Signup successful", user: newUser });
+
+    // Create JWT token
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "1h" });
+
+    res.status(201).json({
+      message: "Signup successful",
+      user: { name: newUser.name, email: newUser.email, _id: newUser._id },
+      token
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
